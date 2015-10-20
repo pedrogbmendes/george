@@ -239,8 +239,6 @@ public:
     unsigned int size () const { return 0; }
 };
 
-
-
 class BayesianLinearRegressionKernel : public Kernel{
 public:
     BayesianLinearRegressionKernel( const unsigned int ndim, const unsigned int dim, const unsigned int degree): Kernel(ndim), dim_(dim), vector_(degree+1) {};
@@ -248,7 +246,7 @@ public:
     double value (const double* x1, const double *x2) const{
         double ret = vector_[0];
         for (unsigned int i=1; i<vector_.size(); i++){
-            ret += pow(x1[dim_],i) * vector_[i]*pow(x2[dim_],i);
+            ret += pow(x1[dim_],i)*vector_[i]*pow(x2[dim_],i);
         }
         return(ret);
     };
@@ -267,10 +265,6 @@ private:
     unsigned int dim_;
     vector<double> vector_;
 };
-
-
-
-
 
 
 //

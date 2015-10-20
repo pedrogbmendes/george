@@ -492,16 +492,6 @@ class BayesianLinearRegressionKernel(Kernel):
         self.dim = dim
         self.degree = degree
 
-    # overload the vector to make them live on the linear scale
-    @property
-    def vector(self):
-        return self.pars
-
-    @vector.setter
-    def vector(self, v):
-        self.pars = v
-
-
 class PythonKernel(Kernel):
     r"""
     A custom kernel evaluated in Python. The gradient is optionally evaluated
