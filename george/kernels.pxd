@@ -63,6 +63,9 @@ cdef extern from "kernels.h" namespace "george::kernels":
     cdef cppclass DotProductKernel(Kernel):
         DotProductKernel(const unsigned int ndim)
 
+    cdef cppclass BayesianLinearRegressionKernel(Kernel):
+        BayesianLinearRegressionKernel(const unsigned int ndim, const unsigned int dim, const unsigned int degree)
+
     # Radial kernels.
     cdef cppclass ExpKernel[M](Kernel):
         ExpKernel(const unsigned int ndim, M* metric)
@@ -239,6 +242,9 @@ cdef inline Kernel* parse_kernel(kernel_spec) except *:
 
     elif kernel_spec.kernel_type == 9:
         kernel = new ExpSine2Kernel(ndim, kernel_spec.dim)
+
+    elif kernel_spec.kernel_type == 10:
+        kernel = new BayesianLinearRegressionKernel(ndim, kernel_spec.dim, kernel_spec.degree)
 
     else:
         raise TypeError("Unknown kernel: {0}".format(

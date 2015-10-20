@@ -457,6 +457,50 @@ class ExpSine2Kernel(Kernel):
         assert dim < self.ndim, "Invalid dimension"
         self.dim = dim
 
+class BayesianLinearRegressionKernel(Kernel):
+    r"""
+    A kernel to perform Bayesian linear regression for the basis functions (1, x, x^2,...)
+
+    .. math::
+
+        k(\mathbf{x}_i,\,\mathbf{x}_j) = 
+            \exp \left( -\Gamma\,\sin^2\left[
+                \frac{\pi}{P}\,\left|x_i-x_j\right|
+            \right] \right)
+
+    where :math:`\Gamma` is the "scale" of the correlation and :math:`P` is
+    the period of the oscillation measured in the same units as
+    :math:`\mathbf{x}`.
+
+    :param gamma:
+        The scale :math:`\Gamma` of the correlations.
+
+    :param period:
+        The period :math:`P` of the oscillation (in the same units as
+        :math:`\mathbf{x}`).
+
+    :param dim: (optional)
+        The dimension along which this kernel should apply. By default, this
+        will be the zero-th axis.
+
+    """
+    kernel_type = 10
+
+    def __init__(self, ndim, dim, degree):
+        super(BayesianLinearRegressionKernel, self).__init__(*([0]*(degree+1)), ndim=ndim)
+        assert dim < self.ndim, "Invalid dimension"
+        self.dim = dim
+        self.degree = degree
+
+    # overload the vector to make them live on the linear scale
+    @property
+    def vector(self):
+        return self.pars
+
+    @vector.setter
+    def vector(self, v):
+        self.pars = v
+
 
 class PythonKernel(Kernel):
     r"""

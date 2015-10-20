@@ -240,6 +240,39 @@ public:
 };
 
 
+
+class BayesianLinearRegressionKernel : public Kernel{
+public:
+    BayesianLinearRegressionKernel( const unsigned int ndim, const unsigned int dim, const unsigned int degree): Kernel(ndim), dim_(dim), vector_(degree+1) {};
+
+    double value (const double* x1, const double *x2) const{
+        double ret = vector_[0];
+        for (unsigned int i=1; i<vector_.size(); i++){
+            ret += pow(x1[dim_],i) * vector_[i]*pow(x2[dim_],i);
+        }
+        return(ret);
+    };
+
+   // Parameter vector spec.
+    unsigned int size () const { return vector_.size(); };
+    void set_parameter (const unsigned int i, const double value) {
+        vector_[i] = value;
+    };
+    double get_parameter (const unsigned int i) const {
+        return vector_[i];
+    };
+
+
+private:
+    unsigned int dim_;
+    vector<double> vector_;
+};
+
+
+
+
+
+
 //
 // RADIAL KERNELS
 //
