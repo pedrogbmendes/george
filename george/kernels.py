@@ -461,27 +461,14 @@ class BayesianLinearRegressionKernel(Kernel):
     r"""
     A kernel to perform Bayesian linear regression for the basis functions (1, x, x^2,...)
 
-    .. math::
+    :param ndim:
+        Number of input dimensions.
 
-        k(\mathbf{x}_i,\,\mathbf{x}_j) = 
-            \exp \left( -\Gamma\,\sin^2\left[
-                \frac{\pi}{P}\,\left|x_i-x_j\right|
-            \right] \right)
+    :param dim:
+        The dimension along which this kernel should apply.
 
-    where :math:`\Gamma` is the "scale" of the correlation and :math:`P` is
-    the period of the oscillation measured in the same units as
-    :math:`\mathbf{x}`.
-
-    :param gamma:
-        The scale :math:`\Gamma` of the correlations.
-
-    :param period:
-        The period :math:`P` of the oscillation (in the same units as
-        :math:`\mathbf{x}`).
-
-    :param dim: (optional)
-        The dimension along which this kernel should apply. By default, this
-        will be the zero-th axis.
+    :param degree:
+        Degree of the basis polynoms. The resulting kernel has degree + 1 hyperparameters.
 
     """
     kernel_type = 10
@@ -492,6 +479,33 @@ class BayesianLinearRegressionKernel(Kernel):
         self.dim = dim
         self.degree = degree
 
+
+
+class TaskKernel(Kernel):
+    r"""
+    A kernel for discrete variables, labeled tasks. The Kernel's parameters
+    correspond to the kernel values. Note that only the offdiagonal elements
+    are stored internally. Check the source code to see how the vector elements
+    map to the Kernel's Gram Matrix elements.
+
+    :param ndim:
+        Number of input dimensions.
+
+    :param dim:
+        The dimension along which this kernel should apply.
+
+    :param num_tasks:
+        Number of tasks (represented by 0, 1, ... num_tasks-1)
+
+    """
+    kernel_type = 11
+
+    def __init__(self, ndim, dim, num_tasks):
+        super(TaskKernel, self).__init__(*([0]*(num_tasks * (num_tasks-1) // 2 )), ndim=ndim)
+        assert dim < self.ndim, "Invalid dimension"
+        self.dim = dim
+        self.num_tasks = num_tasks
+
     # overload the vector to make them live on the linear scale
     @property
     def vector(self):
@@ -500,6 +514,7 @@ class BayesianLinearRegressionKernel(Kernel):
     @vector.setter
     def vector(self, v):
         self.pars = v
+
 
 
 class PythonKernel(Kernel):
