@@ -480,7 +480,6 @@ class BayesianLinearRegressionKernel(Kernel):
         self.degree = degree
 
 
-
 class TaskKernel(Kernel):
     r"""
     A kernel for discrete variables, labeled tasks. The Kernel's parameters
@@ -514,7 +513,6 @@ class TaskKernel(Kernel):
     @vector.setter
     def vector(self, v):
         self.pars = v
-
 
 
 class PythonKernel(Kernel):
