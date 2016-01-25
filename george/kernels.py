@@ -514,6 +514,32 @@ class TaskKernel(Kernel):
     def vector(self, v):
         self.pars = v
 
+class HeteroscedasticNoisePolynomialKernel(Kernel):
+    r"""
+    A kernel to model heteroscedastic noise depending on one dimension.
+
+	This kernel adds
+		
+		K_{HSNP} = c ( 1-s)^{\alpha}
+
+	to the diagonal of the kernel's Gram matrix where $s$ is the input value
+	in the specified dimension (see below). The parameers $c$ and $\alpha$ are
+	the kernel's hyperparameter.
+
+    :param ndim:
+        Number of input dimensions.
+
+    :param dim:
+        The dimension along which this kernel should apply.
+
+    """
+    kernel_type = 12
+
+    def __init__(self, ndim, dim):
+        super(HeteroscedasticNoisePolynomialKernel, self).__init__(*([1]*(2)), ndim=ndim)
+        assert dim < self.ndim, "Invalid dimension"
+        self.dim = dim
+
 
 class PythonKernel(Kernel):
     r"""

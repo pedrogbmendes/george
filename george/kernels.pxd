@@ -66,6 +66,10 @@ cdef extern from "kernels.h" namespace "george::kernels":
     cdef cppclass BayesianLinearRegressionKernel(Kernel):
         BayesianLinearRegressionKernel(const unsigned int ndim, const unsigned int dim, const unsigned int degree)
 
+    cdef cppclass HeteroscedasticNoisePolynomialKernel(Kernel):
+        HeteroscedasticNoisePolynomialKernel(const unsigned int ndim, const unsigned int dim)
+
+
     # discrete kernels
     cdef cppclass TaskKernel(Kernel):
         TaskKernel( const unsigned int ndim, const unsigned int dim, const unsigned int num_tasks)
@@ -252,6 +256,9 @@ cdef inline Kernel* parse_kernel(kernel_spec) except *:
 
     elif kernel_spec.kernel_type == 11:
         kernel = new TaskKernel(ndim, kernel_spec.dim, kernel_spec.num_tasks)
+    
+    elif kernel_spec.kernel_type == 12:
+        kernel = new HeteroscedasticNoisePolynomialKernel(ndim, kernel_spec.dim)
 
     else:
         raise TypeError("Unknown kernel: {0}".format(

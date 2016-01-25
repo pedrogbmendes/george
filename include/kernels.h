@@ -266,6 +266,45 @@ private:
     vector<double> vector_;
 };
 
+
+
+class HeteroscedasticNoisePolynomialKernel : public Kernel {
+public:
+    HeteroscedasticNoisePolynomialKernel (const unsigned int ndim, const unsigned int dim) : Kernel(ndim), dim_(dim){};
+
+    double _switch (const double* x1, const double* x2) const {
+        unsigned int i, n = this->get_ndim();
+        double d, r2 = 0.0;
+        for (i = 0; i < n; ++i) {
+            d = x1[i] - x2[i];
+            r2 += d * d;
+        }
+        if (r2 < DBL_EPSILON) return 1.0;
+        return 0.0;
+    };
+
+    double value (const double* x1, const double* x2) const {
+        return vector_[0]*pow(1.0-x1[dim_], vector_[1]) *  _switch(x1, x2);
+    };
+
+    void gradient (const double* x1, const double* x2, double* grad) const {
+        grad[0] = _switch(x1, x2) * pow(1.0-x1[dim_], vector_[1]);
+        grad[1] = _switch(x1, x2) * vector_[0] * log(1.0-x1[dim_]) * pow(1.0-x1[dim_], vector_[1]);
+    };
+
+    unsigned int size () const { return 2; }
+    void set_parameter (const unsigned int i, const double value) {
+        vector_[i] = value;
+    };
+    double get_parameter (const unsigned int i) const { return vector_[i]; };
+
+private:
+	unsigned int dim_;
+    double vector_[2];
+};
+
+
+
 // discrete kernels
 class TaskKernel : public Kernel{
 public:
