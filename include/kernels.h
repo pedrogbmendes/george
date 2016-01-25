@@ -284,12 +284,12 @@ public:
     };
 
     double value (const double* x1, const double* x2) const {
-        return vector_[0]*pow(1.0-x1[dim_], vector_[1]) *  _switch(x1, x2);
+        return vector_[0]*pow(x1[dim_], vector_[1]) *  _switch(x1, x2);
     };
 
     void gradient (const double* x1, const double* x2, double* grad) const {
-        grad[0] = _switch(x1, x2) * pow(1.0-x1[dim_], vector_[1]);
-        grad[1] = _switch(x1, x2) * vector_[0] * log(1.0-x1[dim_]) * pow(1.0-x1[dim_], vector_[1]);
+        grad[0] = _switch(x1, x2) * pow(x1[dim_], vector_[1]);
+        grad[1] = _switch(x1, x2) * vector_[0] * log(x1[dim_]) * pow(x1[dim_], vector_[1]);
     };
 
     unsigned int size () const { return 2; }
