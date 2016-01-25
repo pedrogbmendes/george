@@ -500,7 +500,7 @@ class TaskKernel(Kernel):
     kernel_type = 11
 
     def __init__(self, ndim, dim, num_tasks):
-        super(TaskKernel, self).__init__(*([0]*(num_tasks * (num_tasks-1) // 2 )), ndim=ndim)
+        super(TaskKernel, self).__init__(*([0]*(num_tasks * (num_tasks+1) // 2 )), ndim=ndim)
         assert dim < self.ndim, "Invalid dimension"
         self.dim = dim
         self.num_tasks = num_tasks

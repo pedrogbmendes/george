@@ -269,13 +269,11 @@ private:
 // discrete kernels
 class TaskKernel : public Kernel{
 public:
-    TaskKernel( const unsigned int ndim, const unsigned int dim, const unsigned int num_tasks): Kernel(ndim), dim_(dim), num_tasks_(num_tasks), vector_(num_tasks*(num_tasks-1)/2) {};
+    TaskKernel( const unsigned int ndim, const unsigned int dim, const unsigned int num_tasks): Kernel(ndim), dim_(dim), num_tasks_(num_tasks), vector_((num_tasks*(num_tasks+1))/2, 0) {};
 
     double value (const double* x1, const double *x2) const{
-		// handle the diagonal entries right away
-		if (x1[dim_] == x2[dim_]) return(1.);
 
-		unsigned int i=0,j=0,vi=0, step_width = num_tasks_-1;
+		unsigned int i=0,j=0,vi=0, step_width = num_tasks_;
 
 		// which element of the matrix should be accessed
 		if ( x1[dim_] < x2[dim_]){
@@ -287,8 +285,8 @@ public:
 			j = (unsigned int) x1[dim_];
 		}
 
-		// adjust the column indox to contain the 'horizontal distance to the diagonal'
-		vi = j - i - 1;
+		// adjust the column index
+		vi = j - i;
 
 		while (i > 0){
 			vi += step_width;

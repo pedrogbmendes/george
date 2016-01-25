@@ -17,8 +17,8 @@ num_tasks = 4
 
 kernel = TaskKernel(1,0,num_tasks)
 
-kernel.vector=range(2, len(kernel.vector)+2)
-
+print(kernel.vector)
+kernel.vector=range(len(kernel.vector))
 print(kernel.vector)
 
 
