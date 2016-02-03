@@ -20,7 +20,7 @@ kernel = HeteroscedasticNoisePolynomialKernel(2,0)
 
 
 num_plot_points=100
-x = np.linspace(0,1, num_plot_points)
+x = np.linspace(0,1, num_plot_points, endpoint=False)
 K = np.zeros(num_plot_points,dtype=np.double)
 
 for foo in range(7):

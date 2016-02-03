@@ -5,6 +5,8 @@
 #include <cfloat>
 #include <vector>
 
+#include <Eigen/Dense>
+
 using std::vector;
 
 namespace george {
@@ -308,38 +310,35 @@ private:
 // discrete kernels
 class TaskKernel : public Kernel{
 public:
-    TaskKernel( const unsigned int ndim, const unsigned int dim, const unsigned int num_tasks): Kernel(ndim), dim_(dim), num_tasks_(num_tasks), vector_((num_tasks*(num_tasks+1))/2, 0) {};
+    TaskKernel( const unsigned int ndim, const unsigned int dim, const unsigned int num_tasks): Kernel(ndim), dim_(dim), num_tasks_(num_tasks), vector_((num_tasks*(num_tasks+1))/2, 0), cov_(num_tasks, num_tasks) {};
 
     double value (const double* x1, const double *x2) const{
 
-		unsigned int i=0,j=0,vi=0, step_width = num_tasks_;
-
-		// which element of the matrix should be accessed
-		if ( x1[dim_] < x2[dim_]){
-			i = (unsigned int) x1[dim_];
-			j = (unsigned int) x2[dim_];
-		}
-		else{
-			i = (unsigned int) x2[dim_];
-			j = (unsigned int) x1[dim_];
-		}
-
-		// adjust the column index
-		vi = j - i;
-
-		while (i > 0){
-			vi += step_width;
-			--step_width;
-			--i;
-		}
-
-        return(vector_[vi]);
+        return(cov_(int(x1[dim_]), int(x2[dim_])));
     };
+
+	void update_cov_(){
+		Eigen::MatrixXd L =  Eigen::MatrixXd::Zero(num_tasks_, num_tasks_);
+		
+		int row=0, col=0;
+		
+		for (int i = 0; i < vector_.size(); ++i){
+			L(row,col) = vector_[i];
+			++row;
+			
+			if (row == num_tasks_){
+				++col;
+				row = col;
+			}
+		}
+		cov_ = (L * (L.transpose()));
+	}
 
    // Parameter vector spec.
     unsigned int size () const { return vector_.size(); };
     void set_parameter (const unsigned int i, const double value) {
         vector_[i] = value;
+		update_cov_();
     };
     double get_parameter (const unsigned int i) const {
         return vector_[i];
@@ -350,6 +349,7 @@ private:
     unsigned int dim_;
     unsigned int num_tasks_;
     vector<double> vector_;
+    Eigen::MatrixXd cov_;
 };
 
 //
