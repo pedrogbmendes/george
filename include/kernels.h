@@ -269,6 +269,33 @@ private:
 };
 
 
+class LearningCurveKernel : public Kernel{
+public:
+    LearningCurveKernel( const unsigned int ndim, const unsigned int dim): Kernel(ndim), dim_(dim), vector_(2) {};
+
+    double value (const double* x1, const double *x2) const{
+	double alpha = vector_[0];
+	double beta = vector_[1];       
+        double ret = pow(beta, alpha) / pow(x1[dim_] + x2[dim_] + beta, alpha);
+        return(ret);
+    };
+
+   // Parameter vector spec.
+    unsigned int size () const { return vector_.size(); };
+    void set_parameter (const unsigned int i, const double value) {
+        vector_[i] = value;
+    };
+    double get_parameter (const unsigned int i) const {
+        return vector_[i];
+    };
+
+
+private:
+    unsigned int dim_;
+    vector<double> vector_;
+};
+
+
 
 class HeteroscedasticNoisePolynomialKernel : public Kernel {
 public:

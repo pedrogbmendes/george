@@ -70,6 +70,10 @@ cdef extern from "kernels.h" namespace "george::kernels":
         HeteroscedasticNoisePolynomialKernel(const unsigned int ndim, const unsigned int dim)
 
 
+    cdef cppclass LearningCurveKernel(Kernel):
+        LearningCurveKernel(const unsigned int ndim, const unsigned int dim)
+
+
     # discrete kernels
     cdef cppclass TaskKernel(Kernel):
         TaskKernel( const unsigned int ndim, const unsigned int dim, const unsigned int num_tasks)
@@ -259,6 +263,8 @@ cdef inline Kernel* parse_kernel(kernel_spec) except *:
     
     elif kernel_spec.kernel_type == 12:
         kernel = new HeteroscedasticNoisePolynomialKernel(ndim, kernel_spec.dim)
+    elif kernel_spec.kernel_type == 13:
+        kernel = new LearningCurveKernel(ndim, kernel_spec.dim)
 
     else:
         raise TypeError("Unknown kernel: {0}".format(

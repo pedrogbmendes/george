@@ -480,6 +480,24 @@ class BayesianLinearRegressionKernel(Kernel):
         self.degree = degree
 
 
+class LearningCurveKernel(Kernel):
+    r"""
+    
+
+    :param ndim:
+        Number of input dimensions.
+
+    :param dim:
+        The dimension along which this kernel should apply.
+
+    """
+    kernel_type = 13
+
+    def __init__(self, ndim, dim):
+        super(LearningCurveKernel, self).__init__(*[1, 1], ndim=ndim)
+        assert dim < self.ndim, "Invalid dimension"
+        self.dim = dim
+
 class TaskKernel(Kernel):
     r"""
     A kernel for discrete variables, labeled tasks. The Kernel's parameters
