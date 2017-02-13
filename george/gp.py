@@ -295,7 +295,7 @@ class GP(object):
         # Compute the predictive covariance.
         KxsT = np.ascontiguousarray(Kxs.T, dtype=np.float64)
         cov = self.kernel.value(xs)
-        cov -= np.dot(Kxs, self.solver.apply_inverse(KxsT, in_place=True))
+        cov -= np.dot(Kxs, self.solver.apply_inverse(KxsT, in_place=False))
 
         return mu, cov
 
