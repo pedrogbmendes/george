@@ -1,0 +1,12 @@
+name: george
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python=3.5
+  - pybind11
+  - numpy
+  - scipy
+  - pyyaml
+  - jinja2

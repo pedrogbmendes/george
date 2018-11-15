@@ -1,48 +1,64 @@
-# Much of this script was adapted from astropy/astropy.
+sudo: false
+language: generic
+dist: trusty
 
-language: python
+addons:
+    apt:
+        sources:
+            - ubuntu-toolchain-r-test
+        packages:
+            - gcc-4.8
+            - g++-4.8
 
 env:
     global:
-        - NUMPY_VERSION=1.8
+        - TEST_LANG='python'
 
 matrix:
     include:
-        # All the versions of Python.
-        - python: 2.6
-        - python: 2.7
-        - python: 3.3
-        - python: 3.4
 
-        # Old versions of NumPy.
-        - python: 2.6
-          env: NUMPY_VERSION=1.7
-        - python: 2.7
-          env: NUMPY_VERSION=1.7
-        - python: 3.3
-          env: NUMPY_VERSION=1.7
+        # This build will compile the LaTeX source of the paper
+        - os: linux
+          env: TEST_LANG='paper'
 
-        - python: 2.6
-          env: NUMPY_VERSION=1.6
-        - python: 2.7
-          env: NUMPY_VERSION=1.6
+        # Linux, Python 2.7
+        - os: linux
+          env: PYTHON_VERSION=2.7 NUMPY_VERSION=1.10
+        - os: linux
+          env: PYTHON_VERSION=2.7 NUMPY_VERSION=1.11
+        - os: linux
+          env: PYTHON_VERSION=2.7 NUMPY_VERSION=1.12
 
-before_install:
-    - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
-    - chmod +x miniconda.sh
-    - ./miniconda.sh -b
-    - export PATH=/home/travis/miniconda/bin:$PATH
-    - conda update --yes conda
+        # Linux, Python 3.5
+        - os: linux
+          env: PYTHON_VERSION=3.5 NUMPY_VERSION=1.12
+
+        # Linux, Python 3.6
+        - os: linux
+          env: PYTHON_VERSION=3.6 NUMPY_VERSION=1.11
+        - os: linux
+          env: PYTHON_VERSION=3.6 NUMPY_VERSION=1.12
+
+        # OSX
+        - os: osx
+          env: PYTHON_VERSION=2.7 NUMPY_VERSION=1.12
+        - os: osx
+          env: PYTHON_VERSION=3.6 NUMPY_VERSION=1.12
 
 install:
-    - sudo apt-get install -qq libeigen3-dev
+    - source .ci/travis.sh
 
-    - conda create --yes -n test python=$TRAVIS_PYTHON_VERSION
-    - source activate test
+script: |
+    if [[ $TEST_LANG == paper ]]
+    then
+      source .ci/build-paper.sh
+    elif [[ $TEST_LANG == python ]]
+    then
+      py.test -v --cov george
+    fi
 
-    - conda install --yes numpy=$NUMPY_VERSION scipy nose pip Cython
-
-    - CXX=g++ python setup.py build_ext --inplace
-
-script:
-    - nosetests -v
+after_success: |
+    if [[ $TEST_LANG == python ]]
+    then
+      coveralls
+    fi
