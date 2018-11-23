@@ -1,0 +1,21 @@
+name: BayesianLinearRegressionKernel
+stationary: false
+params: [log_a, log_b]
+
+doc: |
+    Bayesian Linear Regression Kernel used for Fabolas
+
+reparams:
+    a: return exp(log_a);
+    b: return exp(log_b);
+
+value: |
+    double ret = a;
+    ret += x1 * b * x2;
+    return ret;
+
+grad:
+    log_a:  return exp(log_a);
+    log_b:  return x1 * x2 * exp(log_b);
+    x1: return x2 * exp(log_b);
+    x2: return x1 * exp(log_b);
