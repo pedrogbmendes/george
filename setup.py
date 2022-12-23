@@ -25,7 +25,7 @@ def compile_kernels(fns):
     specs = []
     for i, fn in enumerate(fns):
         with open(fn, "r") as f:
-            spec = yaml.load(f.read())
+            spec = yaml.load(f.read(), Loader=yaml.Loader)
         print("Found kernel '{0}'".format(spec["name"]))
         spec["index"] = i
         spec["reparams"] = spec.get("reparams", {})
