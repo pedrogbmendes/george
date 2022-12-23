@@ -17,3 +17,9 @@ George
     :target: http://george.readthedocs.io/en/latest/?badge=latest
 
 Read the documentation at: `george.readthedocs.io <http://george.readthedocs.io/>`_.
+
+
+
+
+Solve problem with yaml on setup.py
+(add on line 29 of setup.py Loader=yaml.Loader)
